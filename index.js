@@ -9,14 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 
-// L2WI5BhRTK4tk85Y
-// servify
 
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://servify:L2WI5BhRTK4tk85Y@cluster0.umppp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.umppp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -33,18 +31,25 @@ async function run() {
     const database = client.db("servifyDB")
     const addService = database.collection("addService")
 
-    app.post('/addservice' , async(req , res)=>{
+    app.post('/services' , async(req , res)=>{
         const newService = req.body;
         console.log(newService);
         const result = await addService.insertOne(newService);
         res.send(result);
     })
 
-    app.get('/addservice' , async(req , res)=>{
+    app.get('/services' , async(req , res)=>{
         const cursor = addService.find();
         const result = await cursor.toArray();
         res.send(result);
     })
+
+    app.get('/services/:id' , async (req , res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId (id)} 
+        const result = await addService.findOne(query);
+        res.send(result)
+      })
 
 
     // Connect the client to the server	(optional starting in v4.7)
