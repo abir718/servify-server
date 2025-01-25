@@ -30,6 +30,7 @@ async function run() {
 
     const database = client.db("servifyDB")
     const addService = database.collection("addService")
+    const addReviews = database.collection("addReviews")
 
     app.post('/services' , async(req , res)=>{
         const newService = req.body;
@@ -50,6 +51,19 @@ async function run() {
         const result = await addService.findOne(query);
         res.send(result)
       })
+
+      app.post('/reviews' , async(req , res)=>{
+        const newReview = req.body;
+        console.log(newReview);
+        const result = await addReviews.insertOne(newReview);
+        res.send(result);
+    })
+
+    app.get('/reviews' , async(req , res)=>{
+      const cursor = addReviews.find();
+      const result = await cursor.toArray();
+      res.send(result);
+  })
 
 
     // Connect the client to the server	(optional starting in v4.7)
