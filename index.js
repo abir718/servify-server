@@ -59,6 +59,18 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/services/:id' , async(req , res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: false};
+      const updatedService = req.body
+      const updateDoc = {
+        $set: {image: updatedService.image , title: updatedService.title , name: updatedService.name , website: updatedService.website , description: updatedService.description , price: updatedService.price}
+      };
+      const result = await addService.updateOne(filter , updateDoc  , options)
+      res.send(result);
+    })
+
     app.post('/reviews', async (req, res) => {
       const newReview = req.body;
       console.log(newReview);
@@ -85,7 +97,7 @@ async function run() {
       const options = {upsert: true};
       const updatedReview = req.body
       const updateDoc  = {
-        $set: {rating:updatedReview.rating , summary:updatedReview.review}
+        $set: {rating:updatedReview.rating , review:updatedReview.review}
       }
       const result = await addReviews.updateOne(filter , updateDoc  , options)
       res.send(result);
