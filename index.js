@@ -32,38 +32,46 @@ async function run() {
     const addService = database.collection("addService")
     const addReviews = database.collection("addReviews")
 
-    app.post('/services' , async(req , res)=>{
-        const newService = req.body;
-        console.log(newService);
-        const result = await addService.insertOne(newService);
-        res.send(result);
+    app.post('/services', async (req, res) => {
+      const newService = req.body;
+      console.log(newService);
+      const result = await addService.insertOne(newService);
+      res.send(result);
     })
 
-    app.get('/services' , async(req , res)=>{
-        const cursor = addService.find();
-        const result = await cursor.toArray();
-        res.send(result);
+    app.get('/services', async (req, res) => {
+      const cursor = addService.find();
+      const result = await cursor.toArray();
+      res.send(result);
     })
 
-    app.get('/services/:id' , async (req , res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId (id)} 
-        const result = await addService.findOne(query);
-        res.send(result)
-      })
-
-      app.post('/reviews' , async(req , res)=>{
-        const newReview = req.body;
-        console.log(newReview);
-        const result = await addReviews.insertOne(newReview);
-        res.send(result);
+    app.get('/services/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await addService.findOne(query);
+      res.send(result)
     })
 
-    app.get('/reviews' , async(req , res)=>{
+    app.post('/reviews', async (req, res) => {
+      const newReview = req.body;
+      console.log(newReview);
+      const result = await addReviews.insertOne(newReview);
+      res.send(result);
+    })
+
+    app.get('/reviews', async (req, res) => {
       const cursor = addReviews.find();
       const result = await cursor.toArray();
       res.send(result);
-  })
+    })
+
+    app.delete('/reviews/:id' , async (req , res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId (id)}
+      const result = await addReviews.deleteOne(query);
+      res.send(result)
+    })
+
 
 
     // Connect the client to the server	(optional starting in v4.7)
@@ -79,11 +87,11 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/' , (req , res)=>{
-    res.send('Server is running')
+app.get('/', (req, res) => {
+  res.send('Server is running')
 })
 
-app.listen(port , () =>{
-    console.log(`server is running on port ${port}`)
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`)
 })
 
