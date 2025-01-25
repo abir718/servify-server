@@ -72,6 +72,18 @@ async function run() {
       res.send(result)
     })
 
+    app.put('/reviews/:id' , async(req , res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updatedReview = req.body
+      const updateDoc  = {
+        $set: {rating:updatedReview.rating , summary:updatedReview.review}
+      }
+      const result = await addReviews.updateOne(filter , updateDoc  , options)
+      res.send(result);
+    })
+
 
 
     // Connect the client to the server	(optional starting in v4.7)
