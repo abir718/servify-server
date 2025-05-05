@@ -56,13 +56,42 @@ async function run() {
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
       const query = { email: email };
-      const user = await userCol.findOne(query);
+      const user = await addUsers.findOne(query);
       const isAdmin = user?.role === 'admin';
       if (!isAdmin) {
         return res.status(403).send({ message: 'forbidden access' });
       }
       next();
     }
+
+    app.get('/admin-services', verifyToken, verifyAdmin, async (req, res) => {
+      const result = await addService.find().toArray();
+      res.send(result);
+    });
+
+    app.get('/admin-user', verifyToken, verifyAdmin, async (req, res) => {
+      const result = await addUsers.find().toArray();
+      res.send(result);
+    });
+
+    app.patch('/admin-user/make-admin/:id', verifyToken, verifyAdmin, async (req, res) => {
+      await addUsers.updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $set: { role: "admin" } }
+      );
+      res.send({ success: true, message: "User promoted to admin" });
+    });
+
+    app.post('/check-admin', async (req, res) => {
+      const { email } = req.body;
+      const user = await addUsers.findOne({ email: email });
+
+      if (user && user.role === "admin") {
+        res.send({ isAdmin: true });
+      } else {
+        res.send({ isAdmin: false });
+      }
+    });
 
     app.post('/services', async (req, res) => {
       const newService = req.body;
